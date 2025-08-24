@@ -1,0 +1,10 @@
+C:\Users\Rob\source\repos\Freakout\Freakout\bin\Debug\Freakout.exe.config
+C:\Users\Rob\source\repos\Freakout\Freakout\bin\Debug\Freakout.exe
+C:\Users\Rob\source\repos\Freakout\Freakout\bin\Debug\Freakout.pdb
+C:\Users\Rob\source\repos\Freakout\Freakout\obj\Debug\Freakout.csproj.AssemblyReference.cache
+C:\Users\Rob\source\repos\Freakout\Freakout\obj\Debug\Freakout.Form1.resources
+C:\Users\Rob\source\repos\Freakout\Freakout\obj\Debug\Freakout.Properties.Resources.resources
+C:\Users\Rob\source\repos\Freakout\Freakout\obj\Debug\Freakout.csproj.GenerateResource.cache
+C:\Users\Rob\source\repos\Freakout\Freakout\obj\Debug\Freakout.csproj.CoreCompileInputs.cache
+C:\Users\Rob\source\repos\Freakout\Freakout\obj\Debug\Freakout.exe
+C:\Users\Rob\source\repos\Freakout\Freakout\obj\Debug\Freakout.pdb

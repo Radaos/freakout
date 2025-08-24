@@ -1,0 +1,11 @@
+C:\Users\Rob\source\repos\Breakout\Breakout\bin\Debug\Breakout.exe.config
+C:\Users\Rob\source\repos\Breakout\Breakout\bin\Debug\Breakout.exe
+C:\Users\Rob\source\repos\Breakout\Breakout\bin\Debug\Breakout.pdb
+C:\Users\Rob\source\repos\Breakout\Breakout\obj\Debug\Breakout.csproj.AssemblyReference.cache
+C:\Users\Rob\source\repos\Breakout\Breakout\obj\Debug\Breakout.Properties.Resources.resources
+C:\Users\Rob\source\repos\Breakout\Breakout\obj\Debug\Breakout.csproj.GenerateResource.cache
+C:\Users\Rob\source\repos\Breakout\Breakout\obj\Debug\Breakout.csproj.CoreCompileInputs.cache
+C:\Users\Rob\source\repos\Breakout\Breakout\obj\Debug\Breakout.exe
+C:\Users\Rob\source\repos\Breakout\Breakout\obj\Debug\Breakout.pdb
+C:\Users\Rob\source\repos\Breakout\Breakout\obj\Debug\Freakout.Form1.resources
+C:\Users\Rob\source\repos\Breakout\Breakout\obj\Debug\Breakout.exe.config
