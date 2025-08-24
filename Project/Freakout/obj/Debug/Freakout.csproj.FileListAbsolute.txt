@@ -8,3 +8,4 @@ C:\Users\Rob\source\repos\Freakout\Freakout\obj\Debug\Freakout.csproj.GenerateRe
 C:\Users\Rob\source\repos\Freakout\Freakout\obj\Debug\Freakout.csproj.CoreCompileInputs.cache
 C:\Users\Rob\source\repos\Freakout\Freakout\obj\Debug\Freakout.exe
 C:\Users\Rob\source\repos\Freakout\Freakout\obj\Debug\Freakout.pdb
+C:\Users\Rob\source\repos\Freakout\Freakout\obj\Debug\Freakout.exe.config

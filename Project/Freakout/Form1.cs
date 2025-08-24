@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace Freakout
 {
-    public partial class Form1 : Form
+    /// <summary>
+    /// A basic bat and ball style game implemented in a Windows Forms application.
+    /// </summary>
+    public class Form1 : Form
     {
         // Container for disposable components
         private readonly System.ComponentModel.IContainer components = new System.ComponentModel.Container();
@@ -28,13 +32,13 @@ namespace Freakout
         private bool rightPressed = false;
 
         // Ball movement speed
-        private int ballX = 8, ballY = -8;
+        private int ballX = 7, ballY = -7;
 
         // Paddle movement speed
-        private readonly int paddleSpeed = 10;
+        private readonly int paddleSpeed = 12;
 
         // Timer to drive the game loop
-        private readonly Timer gameTimer;
+        private readonly System.Windows.Forms.Timer gameTimer;
 
         // Constructor: sets up the form and initializes the game
         public Form1()
@@ -48,7 +52,7 @@ namespace Freakout
             Paint += Form1_Paint;
 
             // Configure the game timer
-            gameTimer = new Timer
+            gameTimer = new System.Windows.Forms.Timer
             {
                 Interval = 20 // ~50 frames per second
             };
@@ -77,25 +81,34 @@ namespace Freakout
             {
                 for (int x = 20; x < ClientSize.Width - 60; x += 60)
                 {
-                    bricks.Add(new Rectangle(x, y, 50, 20));
+                    bricks.Add(new Rectangle(x, y, 55, 22));
                 }
             }
 
             // Force repaint
             Invalidate();
+
+            Thread.Sleep(500); // Brief pause before new game starts
         }
 
         // Main game loop: updates game state every tick
         private void GameTimer_Tick(object sender, EventArgs e)
         {
-            if (!gameStarted) return;
+            if (!gameStarted)
+            {
+                return;
+            }
 
             // Move paddle based on input
             if (leftPressed && paddle.Left > 0)
+            {
                 paddle.X -= paddleSpeed;
+            }
 
             if (rightPressed && paddle.Right < ClientSize.Width)
+            {
                 paddle.X += paddleSpeed;
+            }
 
             // Move ball
             ball.X += ballX;
@@ -103,14 +116,20 @@ namespace Freakout
 
             // Ball collision with walls
             if (ball.Left < 0 || ball.Right > ClientSize.Width)
+            {
                 ballX = -ballX;
+            }
 
             if (ball.Top < 0)
+            {
                 ballY = -ballY;
+            }
 
             // Ball collision with paddle
             if (ball.IntersectsWith(paddle))
+            {
                 ballY = -ballY;
+            }
 
             // Ball collision with bricks
             for (int i = bricks.Count - 1; i >= 0; i--)
@@ -124,18 +143,20 @@ namespace Freakout
                 }
             }
 
-            // Ball falls below screen — game over
-            if (ball.Bottom > ClientSize.Height && !gameOver)
+            // Ball falls below screen or all bricks gone — game over
+            if (!gameOver && (ball.Bottom > ClientSize.Height || bricks.Count == 0))
             {
                 gameOver = true;
                 gameTimer.Stop(); // Stop game loop
 
                 // Update high score if needed
                 if (score > highScore)
+                {
                     highScore = score;
+                }
 
                 // Show game over message
-                _ = MessageBox.Show($"Game Over! Your score: {score}", "Freakout");
+                _ = MessageBox.Show($"Game Over!\nYour score: {score}", "Freakout");
 
                 // Reset game for next round
                 ResetGame();
@@ -153,32 +174,37 @@ namespace Freakout
             // Show instructions before game starts
             if (!gameStarted)
             {
-                g.DrawString("Press SPACE to start\nUse ← and → to control", new Font("Arial", 24), Brushes.Black, 320, 170);
+                g.DrawString("Press SPACE to start\nUse ← and → to control", new Font("Arial", 24), Brushes.White, 330, 170);
                 return;
             }
 
             // Draw paddle and ball
-            g.FillRectangle(Brushes.Blue, paddle);
-            g.FillEllipse(Brushes.Red, ball);
+            g.FillRectangle(Brushes.Cyan, paddle);
+            g.FillEllipse(Brushes.White, ball);
 
             // Draw bricks
             foreach (Rectangle brick in bricks)
-                g.FillRectangle(Brushes.Green, brick);
+            {
+                g.FillRectangle(Brushes.RosyBrown, brick);
+            }
 
             // Draw score and high score
-            g.DrawString($"Score: {score}", new Font("Arial", 12), Brushes.Black, 10, 10);
-            g.DrawString("High Score:", new Font("Arial", 10), Brushes.Black, ClientSize.Width - 150, 10);
-            g.DrawString($" {highScore}", new Font("Arial", 10), Brushes.Black, ClientSize.Width - 150, 30);
+            g.DrawString($"Score: {score}", new Font("Arial", 12), Brushes.White, 10, 10);
+            g.DrawString($"High Score: {highScore}", new Font("Arial", 12), Brushes.White, ClientSize.Width - 150, 10);
         }
 
         // Handles key press events
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Left)
+            {
                 leftPressed = true;
+            }
 
             if (e.KeyCode == Keys.Right)
+            {
                 rightPressed = true;
+            }
 
             // Start game on spacebar
             if (e.KeyCode == Keys.Space && !gameStarted)
@@ -192,10 +218,14 @@ namespace Freakout
         private void Form1_KeyUp(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Left)
+            {
                 leftPressed = false;
+            }
 
             if (e.KeyCode == Keys.Right)
+            {
                 rightPressed = false;
+            }
         }
 
         // Basic form setup (called by constructor)
@@ -203,6 +233,7 @@ namespace Freakout
         {
             SuspendLayout();
             ClientSize = new System.Drawing.Size(1043, 424);
+            BackColor = System.Drawing.Color.Black;
             Name = "Form1";
             Text = "Freakout";
             ResumeLayout(false);
