@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Threading;
@@ -9,7 +9,7 @@ namespace Freakout
     /// <summary>
     /// A basic bat and ball style game implemented in a Windows Forms application.
     /// </summary>
-    public class Form1 : Form
+    public class PadForm : Form
     {
         // Container for disposable components
         private readonly System.ComponentModel.IContainer components = new System.ComponentModel.Container();
@@ -41,7 +41,7 @@ namespace Freakout
         private readonly System.Windows.Forms.Timer gameTimer;
 
         // Constructor: sets up the form and initializes the game
-        public Form1()
+        public PadForm()
         {
             InitializeComponent(); // Basic form setup
             DoubleBuffered = true; // Reduces flickering during rendering
@@ -61,6 +61,81 @@ namespace Freakout
 
             // Start with a fresh game state
             ResetGame();
+        }
+
+        /// <summary>
+        /// Launches the game form modally from external DLL calls.
+        /// This method handles the Windows Forms message loop required for DLL context.
+        /// </summary>
+        /// <returns>DialogResult indicating how the form was closed</returns>
+        public static DialogResult LaunchGame()
+        {
+            try
+            {
+                // Try to set Application settings, but catch and ignore the exception if they're already set
+                try
+                {
+                    if (!Application.MessageLoop)
+                    {
+                        Application.EnableVisualStyles();
+                        Application.SetCompatibleTextRenderingDefault(false);
+                    }
+                }
+                catch (InvalidOperationException)
+                {
+                    // Application settings already initialized - this is expected in many scenarios
+                    System.Diagnostics.Debug.WriteLine("Application settings already initialized (this is normal)");
+                }
+
+                using (var game = new PadForm())
+                {
+                    return game.ShowDialog();
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error launching PadForm: {ex.Message}");
+                MessageBox.Show($"Failed to launch game: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return DialogResult.Abort;
+            }
+        }
+
+        /// <summary>
+        /// Shows the game form non-modally from external DLL calls.
+        /// Caller is responsible for managing the form lifecycle.
+        /// </summary>
+        /// <returns>The PadForm instance that was created and shown</returns>
+        public static PadForm ShowGame()
+        {
+            try
+            {
+                // Try to set Application settings, but catch and ignore the exception if they're already set
+                try
+                {
+                    if (!Application.MessageLoop)
+                    {
+                        Application.EnableVisualStyles();
+                        Application.SetCompatibleTextRenderingDefault(false);
+                    }
+                }
+                catch (InvalidOperationException)
+                {
+                    // Application settings already initialized - this is expected in many scenarios
+                    System.Diagnostics.Debug.WriteLine("Application settings already initialized (this is normal)");
+                }
+
+                var game = new PadForm();
+                game.Show();
+                game.Activate();
+                game.BringToFront();
+                return game;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error showing PadForm: {ex.Message}");
+                MessageBox.Show($"Failed to show game: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return null;
+            }
         }
 
         // Resets the game state for a new round
