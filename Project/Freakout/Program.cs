@@ -14,8 +14,9 @@ namespace Freakout
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Padform());
+            Application.Run(new PadForm());
         }
     }
 }
+
 
