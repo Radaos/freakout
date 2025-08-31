@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
+
 namespace Freakout
 {
     /// <summary>
@@ -10,6 +11,9 @@ namespace Freakout
     /// </summary>
     public class PadForm : Form
     {
+        private readonly Timer timer;
+        private uint counter = 0;
+
         // Container for disposable components
         private readonly System.ComponentModel.IContainer components = new System.ComponentModel.Container();
 
@@ -26,11 +30,14 @@ namespace Freakout
         private bool gameOver = false;
         private bool gameStarted = false;
         private string gameOverMessage = string.Empty;
-        private readonly string gameStartMessage = "Press SPACE to start\nUse ← and → to control";
+        private readonly string gameStartMessage = "Press SPACE to start\nUse ← → and ↑ ↓ to control";
 
         // Input tracking
         private bool leftPressed = false;
         private bool rightPressed = false;
+        private bool upPressed = false;
+        private bool downPressed = false;
+
 
         // Ball movement speed
         private int ballX = 7, ballY = -7;
@@ -150,7 +157,7 @@ namespace Freakout
             bricks.Clear();
             score = 0;
             gameStarted = false;
-            gameOver = false;            
+            gameOver = false;
 
             // Generate brick layout
             for (int y = 50; y < 150; y += 30)
@@ -168,6 +175,8 @@ namespace Freakout
         // Main game loop: updates game state every tick
         private void GameTimer_Tick(object sender, EventArgs e)
         {
+            counter++;
+
             if (!gameStarted)
             {
                 return;
@@ -183,6 +192,17 @@ namespace Freakout
             {
                 paddle.X += paddleSpeed;
             }
+
+            if (upPressed && paddle.Top > 0)
+            {
+                paddle.Y -= paddleSpeed;
+            }
+
+            if (downPressed && paddle.Bottom < ClientSize.Height)
+            {
+                paddle.Y += paddleSpeed;
+            }
+
 
             // Move ball
             ball.X += ballX;
@@ -224,19 +244,36 @@ namespace Freakout
                 gameStarted = false;
                 gameTimer.Stop(); // Stop game loop
 
+                // Prepare game over message to be drawn on screen
+                const double maxBonusMultiplier = 0.3;
+                const uint timeLimit = 6000; // 2 minutes at 20ms intervals
+                double timeRatio = ClampD((double)(timeLimit - counter) / timeLimit);
+                double bonus = (uint)(score * maxBonusMultiplier * timeRatio);
+                uint totalScore = score + (uint)bonus;
+                gameOverMessage = $"GAME OVER!\nYour score: {score}  + bonus: {bonus} = {totalScore}";
+
                 // Update high score if needed
-                if (score > highScore)
+                if (totalScore > highScore)
                 {
-                    highScore = score;
+                    highScore = totalScore;
                 }
 
-                // Prepare game over message to be drawn on screen
-                gameOverMessage = $"GAME OVER!\nYour score: {score}";
+
                 Invalidate(); // Force repaint so message appears
             }
 
             // Trigger repaint
             Invalidate();
+        }
+
+        // Clamps a value between 0 and 1
+        public static double ClampD(double value)
+        {
+            if (value < 0f)
+                return 0f;
+            if (value > 1f)
+                return 1f;
+            return value;
         }
 
         // Handles all drawing on the screen
@@ -259,13 +296,13 @@ namespace Freakout
             g.DrawString($"High Score: {highScore}", new Font("Arial", 12), Brushes.White, ClientSize.Width - 150, 10);
 
 
-                using (Font font = new Font("Arial", 34, FontStyle.Bold))
-                using (StringFormat sf = new StringFormat()
-                {
-                    Alignment = StringAlignment.Center,
-                    LineAlignment = StringAlignment.Center
-                })
-                {
+            using (Font font = new Font("Arial", 34, FontStyle.Bold))
+            using (StringFormat sf = new StringFormat()
+            {
+                Alignment = StringAlignment.Center,
+                LineAlignment = StringAlignment.Center
+            })
+            {
                 // Draw Game Over message if game is over
                 if (gameOver && !string.IsNullOrEmpty(gameOverMessage))
                 {
@@ -273,7 +310,7 @@ namespace Freakout
                     g.DrawString(gameStartMessage, font, Brushes.White, new RectangleF(0, 100, ClientSize.Width, ClientSize.Height), sf);
                 }
                 // Draw Start message if game hasn't started yet
-                if(!gameStarted && !gameOver)
+                if (!gameStarted && !gameOver)
                 {
                     g.DrawString(gameStartMessage, font, Brushes.White, new RectangleF(0, 100, ClientSize.Width, ClientSize.Height), sf);
                 }
@@ -292,6 +329,16 @@ namespace Freakout
             if (e.KeyCode == Keys.Right)
             {
                 rightPressed = true;
+            }
+
+            if (e.KeyCode == Keys.Up)
+            {
+                upPressed = true;
+            }
+
+            if (e.KeyCode == Keys.Down)
+            {
+                downPressed = true;
             }
 
             if (e.KeyCode == Keys.Space)
@@ -320,6 +367,16 @@ namespace Freakout
             if (e.KeyCode == Keys.Right)
             {
                 rightPressed = false;
+            }
+
+            if (e.KeyCode == Keys.Up)
+            {
+                upPressed = false;
+            }
+
+            if (e.KeyCode == Keys.Down)
+            {
+                downPressed = false;
             }
         }
 

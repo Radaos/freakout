@@ -9,7 +9,7 @@ namespace Freakout
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        private static void 
+        private static void
             Main()
         {
             Application.EnableVisualStyles();
