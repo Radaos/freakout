@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Threading;
 using System.Windows.Forms;
 
 namespace Freakout
@@ -26,6 +25,8 @@ namespace Freakout
         // Game state flags
         private bool gameOver = false;
         private bool gameStarted = false;
+        private string gameOverMessage = string.Empty;
+        private readonly string gameStartMessage = "Press SPACE to start\nUse ← and → to control";
 
         // Input tracking
         private bool leftPressed = false;
@@ -87,7 +88,7 @@ namespace Freakout
                     System.Diagnostics.Debug.WriteLine("Application settings already initialized (this is normal)");
                 }
 
-                using (var game = new PadForm())
+                using (PadForm game = new PadForm())
                 {
                     return game.ShowDialog();
                 }
@@ -95,7 +96,7 @@ namespace Freakout
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Error launching PadForm: {ex.Message}");
-                MessageBox.Show($"Failed to launch game: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                _ = MessageBox.Show($"Failed to launch game: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return DialogResult.Abort;
             }
         }
@@ -124,7 +125,7 @@ namespace Freakout
                     System.Diagnostics.Debug.WriteLine("Application settings already initialized (this is normal)");
                 }
 
-                var game = new PadForm();
+                PadForm game = new PadForm();
                 game.Show();
                 game.Activate();
                 game.BringToFront();
@@ -133,7 +134,7 @@ namespace Freakout
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Error showing PadForm: {ex.Message}");
-                MessageBox.Show($"Failed to show game: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                _ = MessageBox.Show($"Failed to show game: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return null;
             }
         }
@@ -149,7 +150,7 @@ namespace Freakout
             bricks.Clear();
             score = 0;
             gameStarted = false;
-            gameOver = false;
+            gameOver = false;            
 
             // Generate brick layout
             for (int y = 50; y < 150; y += 30)
@@ -162,8 +163,6 @@ namespace Freakout
 
             // Force repaint
             Invalidate();
-
-            Thread.Sleep(500); // Brief pause before new game starts
         }
 
         // Main game loop: updates game state every tick
@@ -222,6 +221,7 @@ namespace Freakout
             if (!gameOver && (ball.Bottom > ClientSize.Height || bricks.Count == 0))
             {
                 gameOver = true;
+                gameStarted = false;
                 gameTimer.Stop(); // Stop game loop
 
                 // Update high score if needed
@@ -230,11 +230,9 @@ namespace Freakout
                     highScore = score;
                 }
 
-                // Show game over message
-                _ = MessageBox.Show($"Game Over!\nYour score: {score}", "Freakout");
-
-                // Reset game for next round
-                ResetGame();
+                // Prepare game over message to be drawn on screen
+                gameOverMessage = $"GAME OVER!\nYour score: {score}";
+                Invalidate(); // Force repaint so message appears
             }
 
             // Trigger repaint
@@ -245,13 +243,6 @@ namespace Freakout
         private void Form1_Paint(object sender, PaintEventArgs e)
         {
             Graphics g = e.Graphics;
-
-            // Show instructions before game starts
-            if (!gameStarted)
-            {
-                g.DrawString("Press SPACE to start\nUse ← and → to control", new Font("Arial", 24), Brushes.White, 330, 170);
-                return;
-            }
 
             // Draw paddle and ball
             g.FillRectangle(Brushes.Cyan, paddle);
@@ -266,6 +257,28 @@ namespace Freakout
             // Draw score and high score
             g.DrawString($"Score: {score}", new Font("Arial", 12), Brushes.White, 10, 10);
             g.DrawString($"High Score: {highScore}", new Font("Arial", 12), Brushes.White, ClientSize.Width - 150, 10);
+
+
+                using (Font font = new Font("Arial", 34, FontStyle.Bold))
+                using (StringFormat sf = new StringFormat()
+                {
+                    Alignment = StringAlignment.Center,
+                    LineAlignment = StringAlignment.Center
+                })
+                {
+                // Draw Game Over message if game is over
+                if (gameOver && !string.IsNullOrEmpty(gameOverMessage))
+                {
+                    g.DrawString(gameOverMessage, font, Brushes.Yellow, new RectangleF(0, 0, ClientSize.Width, ClientSize.Height), sf);
+                    g.DrawString(gameStartMessage, font, Brushes.White, new RectangleF(0, 100, ClientSize.Width, ClientSize.Height), sf);
+                }
+                // Draw Start message if game hasn't started yet
+                if(!gameStarted && !gameOver)
+                {
+                    g.DrawString(gameStartMessage, font, Brushes.White, new RectangleF(0, 100, ClientSize.Width, ClientSize.Height), sf);
+                }
+            }
+            return;
         }
 
         // Handles key press events
@@ -281,11 +294,18 @@ namespace Freakout
                 rightPressed = true;
             }
 
-            // Start game on spacebar
-            if (e.KeyCode == Keys.Space && !gameStarted)
+            if (e.KeyCode == Keys.Space)
             {
-                gameStarted = true;
-                gameTimer.Start();
+                if (!gameStarted)
+                {
+                    if (gameOver)
+                    {
+                        ResetGame();
+                    }
+
+                    gameStarted = true;
+                    gameTimer.Start();
+                }
             }
         }
 
