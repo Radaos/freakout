@@ -1,41 +1,55 @@
-# Prerequisites
-*.d
+# Build results
+bin/
+obj/
+[Bb]uild/
+[Ll]og/
+*.log
 
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
 
-# Precompiled Headers
-*.gch
-*.pch
+# Visual Studio folder
+.vs/
 
-# Linker files
-*.ilk
-
-# Debugger Files
+# Temporary files
+*.tmp
+*.temp
+*.cache
 *.pdb
+*.dbmdl
 
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
+# NuGet packages (if using package restore)
+packages/
+*.nupkg
+*.snupkg
 
-# Fortran module files
-*.mod
-*.smod
+# Publish profiles (optional—comment out if you want to include)
+Properties/PublishProfiles/
 
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
+# IIS Express
+*.vspscc
+*.vssscc
+*.launch.json
+*.local.json
 
-# Executables
-*.exe
-*.out
-*.app
+# Rider IDE
+.idea/
+*.sln.iml
 
-# debug information files
-*.dwo
+# DotCover
+*.dotCover
+
+# Resharper
+*.DotSettings.user
+
+# Backup & autosave
+*~ 
+*.bak
+*.swp
+
+# Others
+Thumbs.db
+Desktop.ini
