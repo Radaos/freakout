@@ -7,7 +7,7 @@ using System.Windows.Forms;
 namespace Freakout
 {
     /// <summary>
-    /// A basic bat and ball style game implemented in a Windows Forms application.
+    /// A basic bat and ball style game, with 2D bat movement.
     /// </summary>
     public class PadForm : Form
     {
@@ -37,7 +37,6 @@ namespace Freakout
         private bool rightPressed = false;
         private bool upPressed = false;
         private bool downPressed = false;
-
 
         // Ball movement speed
         private int ballX = 7, ballY = -7;
