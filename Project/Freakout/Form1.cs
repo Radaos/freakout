@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
 
 
 namespace Freakout
@@ -21,6 +22,7 @@ namespace Freakout
         private Rectangle paddle;
         private Rectangle ball;
         private readonly List<Rectangle> bricks = new List<Rectangle>();
+        private int bricksStarting; 
 
         // Score tracking
         private uint highScore;
@@ -166,7 +168,7 @@ namespace Freakout
                     bricks.Add(new Rectangle(x, y, 55, 22));
                 }
             }
-
+            bricksStarting = bricks.Count;
             // Force repaint
             Invalidate();
         }
@@ -244,10 +246,10 @@ namespace Freakout
                 gameTimer.Stop(); // Stop game loop
 
                 // Prepare game over message to be drawn on screen
-                const double maxBonusMultiplier = 0.3;
-                const uint timeLimit = 6000; // 2 minutes at 20ms intervals
-                double timeRatio = ClampD((double)(timeLimit - counter) / timeLimit);
-                double bonus = (uint)(score * maxBonusMultiplier * timeRatio);
+                const double bonusMultiplier = 4000;
+                double brickRatio = (double)score / (bricksStarting * 10);
+                double timeRatio = ((double)(brickRatio / counter)); 
+                double bonus = (uint)(score * bonusMultiplier * timeRatio);
                 uint totalScore = score + (uint)bonus;
                 gameOverMessage = $"GAME OVER!\nYour score: {score}  + bonus: {bonus} = {totalScore}";
 
@@ -256,7 +258,6 @@ namespace Freakout
                 {
                     highScore = totalScore;
                 }
-
 
                 Invalidate(); // Force repaint so message appears
             }
